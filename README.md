@@ -24,18 +24,19 @@ bin/plugin install logstash-output-opsgenie
   mutate{
     add_field => {
         "opsgenieAction" => "create"
+        "title" "Alert raised!"
         "alias" => "neo123"
         "description" => "Every alert needs a description"
         "actions" => ["Restart", "AnExampleAction"]
-	"tags" => ["OverwriteQuietHours","Critical"]
-	"[details][prop1]"=> "val1"
+	    "tags" => ["OverwriteQuietHours","Critical"]
+	    "[details][prop1]"=> "val1"
         "[details][prop2]" => "val2"
         "entity" => "An example entity"
         "priority" => "P4"
-	"source" => "custom source"
-	"user" => "custom user"
-	"note" => "alert is created"
-        }
+    	"source" => "custom source"
+	    "user" => "custom user"
+    	"note" => "alert is created"
+      }
     }
     ruby {
  	 code => "event.set('teams', [{'name' => 'Integration'}, {'name' => 'Platform'}])"

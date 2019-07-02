@@ -8,7 +8,7 @@ require "net/https"
 
 # The OpsGenie output is used to Create, Close, Acknowledge Alerts and Add Note to alerts in OpsGenie.
 # For this output to work, your event must contain "opsgenieAction" field and you must configure apiKey field in configuration.
-# If opsgenieAction is "create", event must contain "message" field.
+# If opsgenieAction is "create", event must contain a "title" field.
 # For other actions ("close", "acknowledge" or "note"), event must contain "alias" or "alertId" field.
 #
 # If your event have the following fields (If you use default field names).
@@ -21,7 +21,7 @@ require "net/https"
 #    "teams" => ["teams"],
 #    "description" => "test description",
 #    "source" => "test source",
-#    "message" => "test message",
+#    "title" => "test title",
 #    "priority" => "P4",
 #    "tags" => ["tags"],
 #    "@timestamp" => 2017-09-15T13:32:00.747Z,
@@ -40,7 +40,7 @@ require "net/https"
 # An alert with following properties will be created.
 #
 #     {
-#       "message": "test message",
+#       "message": "test title",
 #       "alias": "test alias",
 #       "teams": ["teams"],
 #       "description": "test description",
@@ -76,7 +76,6 @@ class LogStash::Outputs::OpsGenie < LogStash::Outputs::Base
   config :proxy_address, :validate => :string, :required => false
   config :proxy_port, :validate => :number, :required => false
 
-
   # Host of opsgenie api, normally you should not need to change this field.
   config :opsGenieBaseUrl, :validate => :string, :required => false, :default => 'https://api.opsgenie.com/v2/alerts/'
 
@@ -108,7 +107,7 @@ class LogStash::Outputs::OpsGenie < LogStash::Outputs::Base
   config :aliasAttribute, :validate => :string, :required => false, :default => 'alias'
 
   # The value of this field holds the alert text.
-  config :messageAttribute, :validate => :string, :required => false, :default => 'message'
+  config :titleAttribute, :validate => :string, :required => false, :default => 'title'
 
   # The value of this field holds the list of team names which will be responsible for the alert.
   config :teamsAttribute, :validate => :string, :required => false, :default => 'teams'
@@ -217,7 +216,7 @@ class LogStash::Outputs::OpsGenie < LogStash::Outputs::Base
 
   private
   def populateCreateAlertContent(params, event)
-    params['message'] = event.get(@messageAttribute) if event.get(@messageAttribute)
+    params['message'] = event.get(@titleAttribute) if event.get(@titleAttribute)
     params['alias'] = event.get(@aliasAttribute) if event.get(@aliasAttribute)
     params['teams'] = event.get(@teamsAttribute) if event.get(@teamsAttribute)
     params['visibleTo'] = event.get(@visibleToAttribute) if event.get(@visibleToAttribute)
